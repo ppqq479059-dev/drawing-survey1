@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>현장 드로잉 설문 (최종본)</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background:#fafafa; overscroll-behavior: none; }
+    #wrap { display:flex; flex-direction:column; min-height:100vh; }
+
+    .hint { text-align:center; font-size:14px; color:#666; padding:10px; }
+
+    #canvas { flex:1; background:#fff; touch-action:none; }
+
+    .tools { display:flex; gap:12px; padding:12px; border-top:1px solid #eee; justify-content:center; }
+    .tools button {
+      padding: 22px 26px;
+      font-size: 30px;
+      border-radius: 14px;
+      border: none;
+      background: #f0f0f0;
+    }
+    .tools button:active { transform: scale(0.96); }
+
+    .inputs { display:flex; gap:10px; padding:12px; }
+    .inputs input {
+      flex:1;
+      padding: 18px;
+      font-size: 18px;
+      border-radius: 12px;
+      border:1px solid #ddd;
+    }
+
+    .submit {
+      padding: 22px;
+      font-size: 20px;
+      width: 100%;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 0;
+    }
+    .submit:active { background:#000; }
+  </style>
+</head>
+<body>
+<div id="wrap">
+  <div class="hint">영감 예시: S □ △ ○ — 방식은 자유롭게</div>
+
+  <canvas id="canvas"></canvas>
+
+  <div class="tools">
+    <button id="pen">✏️</button>
+    <button id="eraser">🧽</button>
+    <button id="undo">↩️</button>
+    <button id="clear">🗑️</button>
+  </div>
+
+  <div class="inputs">
+    <input id="name" placeholder="이름 (선택)">
+    <input id="contact" placeholder="연락처 (선택)">
+  </div>
+
+  <button class="submit" id="submit">제출 & PNG 저장</button>
+</div>
+
+<script>
+  const wrap = document.getElementById('wrap');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  let drawing = false;
+  let erasing = false;
+  let history = [];
+  let saving = false;
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const prev = canvas.toDataURL();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    if (prev) {
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.src = prev;
+    }
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function saveState() {
+    history.push(canvas.toDataURL());
+    if (history.length > 10) history.shift();
+  }
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return { x: p.clientX - r.left, y: p.clientY - r.top };
+  }
+
+  function start(e) {
+    e.preventDefault();
+    drawing = true;
+    saveState();
+    ctx.beginPath();
+    const {x,y} = getPos(e);
+    ctx.moveTo(x, y);
+  }
+
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const {x,y} = getPos(e);
+
+    ctx.lineWidth = erasing ? 26 : 4;
+    ctx.lineCap = 'round';
+
+    if (erasing) {
+      ctx.globalCompositeOperation = 'destination-out';
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = '#000';
+    }
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+
+  function end() {
+    drawing = false;
+    ctx.beginPath();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, { passive:false });
+  canvas.addEventListener('touchmove', move, { passive:false });
+  canvas.addEventListener('touchend', end);
+
+  pen.onclick = () => erasing = false;
+  eraser.onclick = () => erasing = true;
+
+  undo.onclick = () => {
+    const last = history.pop();
+    if (!last) return;
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = last;
+  };
+
+  clear.onclick = () => {
+    if (!confirm('전부 지울까요?')) return;
+    saveState();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  submit.onclick = async () => {
+    if (saving) return;
+    saving = true;
+
+    if (!confirm('제출하고 전체 화면을 PNG로 저장할까요?')) {
+      saving = false;
+      return;
+    }
+
+    const canvasImg = await html2canvas(wrap, {
+      backgroundColor: '#fafafa',
+      scale: 2,
+      windowWidth: wrap.scrollWidth,
+      windowHeight: wrap.scrollHeight
+    });
+
+    const link = document.createElement('a');
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const name = document.getElementById('name').value || 'anon';
+    link.download = `drawing_${ts}_${name}.png`;
+    link.href = canvasImg.toDataURL('image/png');
+    link.click();
+
+    setTimeout(() => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      document.getElementById('name').value = '';
+      document.getElementById('contact').value = '';
+      history = [];
+      saving = false;
+      alert('저장 완료! 다음 분 준비됐어요.');
+    }, 400);
+  };
+
+  // 뒤로가기 방지 (현장 실수 방지)
+  history.pushState(null, "", location.href);
+  window.onpopstate = () => history.pushState(null, "", location.href);
+</script>
+</body>
+</html>
