@@ -56,7 +56,7 @@
 
     .board {
       position: relative;
-      width: min(100%, 560px);
+      width: min(100%, 760px);
       aspect-ratio: 210 / 297;
       background: #fff;
       border: 1px solid #ddd;
@@ -68,7 +68,7 @@
       position: absolute;
       border: 1mm solid #2f5d7e;
       pointer-events: none;
-      z-index: 3;
+      z-index: 1;
     }
 
     .guide-large {
@@ -155,6 +155,12 @@
 
     .submit:active {
       background: #000;
+    }
+
+    @media (max-width: 1024px) {
+      .board {
+        width: min(100%, 78vw);
+      }
     }
 
     @media (max-width: 768px) {
@@ -246,7 +252,7 @@
 </head>
 <body>
   <div id="wrap">
-    <div class="hint">A4 세로 기준 · 중앙 12×12 정사각형 · 그 안에 중앙 6×6 정사각형</div>
+    <div class="hint">S □ △ ○ 방식은 자유롭게</div>
 
     <div class="board-wrap">
       <div id="board" class="board">
