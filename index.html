@@ -27,7 +27,119 @@
       color: #111;
     }
 
-    #wrap {
+    .hidden {
+      display: none !important;
+    }
+
+    /* 동의 화면 */
+    #consentScreen {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: #f5f5f5;
+    }
+
+    .consent-card {
+      width: min(100%, 760px);
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      border: 1px solid #eaeaea;
+    }
+
+    .consent-title {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .consent-sub {
+      margin: 0 0 18px;
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .consent-box {
+      border: 1px solid #e5e5e5;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fcfcfc;
+    }
+
+    .consent-check {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .consent-check input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 1px;
+      flex: 0 0 auto;
+    }
+
+    .consent-check label {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .consent-list {
+      margin: 0;
+      padding-left: 18px;
+      color: #444;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .consent-note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .consent-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .consent-btn {
+      flex: 1;
+      min-height: 56px;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .consent-btn.secondary {
+      background: #f0f0f0;
+      color: #111;
+    }
+
+    .consent-btn.primary {
+      background: #111;
+      color: #fff;
+    }
+
+    .consent-btn.primary:disabled {
+      background: #bbb;
+      cursor: not-allowed;
+    }
+
+    /* 앱 화면 */
+    #appScreen {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
@@ -164,6 +276,27 @@
     }
 
     @media (max-width: 768px) {
+      .consent-card {
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+      .consent-title {
+        font-size: 22px;
+      }
+
+      .consent-check label {
+        font-size: 15px;
+      }
+
+      .consent-list {
+        font-size: 13px;
+      }
+
+      .consent-actions {
+        flex-direction: column;
+      }
+
       .hint {
         font-size: 13px;
         padding: 8px 10px;
@@ -208,6 +341,14 @@
     }
 
     @media (max-width: 430px) {
+      .consent-title {
+        font-size: 20px;
+      }
+
+      .consent-sub {
+        font-size: 13px;
+      }
+
       .hint {
         font-size: 12px;
       }
@@ -251,8 +392,52 @@
   </style>
 </head>
 <body>
-  <div id="wrap">
-    <div class="hint">S □ △ ○ 방식은 자유롭게</div>
+  <section id="consentScreen">
+    <div class="consent-card">
+      <h1 class="consent-title">설문 참여 동의</h1>
+      <p class="consent-sub">
+        아래 내용을 확인한 뒤 동의해 주세요. 필수 동의에 체크해야 설문을 시작할 수 있습니다.
+      </p>
+
+      <div class="consent-box">
+        <div class="consent-check">
+          <input type="checkbox" id="agreeRequired">
+          <label for="agreeRequired">[필수] 드로잉 결과 수집·이용에 동의합니다.</label>
+        </div>
+        <ul class="consent-list">
+          <li>목적: 드로잉 설문 진행 및 결과 분석</li>
+          <li>항목: 드로잉 결과 이미지, 참여 일시</li>
+          <li>보유 기간: 조사 종료 후 내부 기준에 따라 보관 후 파기</li>
+          <li>거부 권리: 동의를 거부할 수 있으나, 거부 시 설문 참여가 제한됩니다.</li>
+        </ul>
+      </div>
+
+      <div class="consent-box">
+        <div class="consent-check">
+          <input type="checkbox" id="agreeOptional">
+          <label for="agreeOptional">[선택] 이름·연락처 수집·이용에 동의합니다.</label>
+        </div>
+        <ul class="consent-list">
+          <li>목적: 참여자 식별, 사후 연락 또는 안내(필요 시)</li>
+          <li>항목: 이름, 연락처</li>
+          <li>보유 기간: 목적 달성 후 내부 기준에 따라 보관 후 파기</li>
+          <li>거부 권리: 동의를 거부해도 드로잉 설문 참여는 가능합니다.</li>
+        </ul>
+      </div>
+
+      <p class="consent-note">
+        만 14세 미만은 법정대리인의 동의가 필요할 수 있습니다. 실제 운영 시 보유 기간과 파기 기준은 조사 목적에 맞게 구체적으로 기재하는 것을 권장합니다.
+      </p>
+
+      <div class="consent-actions">
+        <button class="consent-btn secondary" type="button" id="declineBtn">동의하지 않음</button>
+        <button class="consent-btn primary" type="button" id="startBtn" disabled>동의하고 시작</button>
+      </div>
+    </div>
+  </section>
+
+  <main id="appScreen" class="hidden">
+    <div class="hint">S □ △ ○ — 방식은 자유롭게</div>
 
     <div class="board-wrap">
       <div id="board" class="board">
@@ -269,16 +454,23 @@
       <button id="clear" type="button">🗑️</button>
     </div>
 
-    <div class="inputs">
+    <div class="inputs hidden" id="contactFields">
       <input id="name" placeholder="이름 (선택)">
       <input id="contact" placeholder="연락처 (선택)">
     </div>
 
     <button class="submit" id="submit" type="button">제출 & PNG 저장</button>
-  </div>
+  </main>
 
   <script>
-    const wrap = document.getElementById('wrap');
+    const consentScreen = document.getElementById('consentScreen');
+    const appScreen = document.getElementById('appScreen');
+    const agreeRequired = document.getElementById('agreeRequired');
+    const agreeOptional = document.getElementById('agreeOptional');
+    const startBtn = document.getElementById('startBtn');
+    const declineBtn = document.getElementById('declineBtn');
+    const contactFields = document.getElementById('contactFields');
+
     const board = document.getElementById('board');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -288,14 +480,48 @@
     const undo = document.getElementById('undo');
     const clearBtn = document.getElementById('clear');
     const submitBtn = document.getElementById('submit');
+    const nameInput = document.getElementById('name');
+    const contactInput = document.getElementById('contact');
 
     let drawing = false;
     let erasing = false;
     let drawHistory = [];
     let saving = false;
 
+    function updateConsentUI() {
+      startBtn.disabled = !agreeRequired.checked;
+      contactFields.classList.toggle('hidden', !agreeOptional.checked);
+
+      if (!agreeOptional.checked) {
+        nameInput.value = '';
+        contactInput.value = '';
+      }
+    }
+
+    agreeRequired.addEventListener('change', updateConsentUI);
+    agreeOptional.addEventListener('change', updateConsentUI);
+
+    declineBtn.addEventListener('click', () => {
+      alert('필수 동의가 없으면 설문을 진행할 수 없습니다.');
+    });
+
+    startBtn.addEventListener('click', () => {
+      if (!agreeRequired.checked) {
+        alert('필수 동의가 필요합니다.');
+        return;
+      }
+
+      consentScreen.classList.add('hidden');
+      appScreen.classList.remove('hidden');
+
+      setTimeout(() => {
+        resizeCanvas();
+      }, 50);
+    });
+
     function resizeCanvas() {
       const rect = board.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
 
       let prev = null;
       try {
@@ -321,7 +547,6 @@
     window.addEventListener('orientationchange', () => {
       setTimeout(resizeCanvas, 200);
     });
-    resizeCanvas();
 
     function saveState() {
       drawHistory.push(canvas.toDataURL());
@@ -412,33 +637,45 @@
       if (saving) return;
       saving = true;
 
+      if (!agreeRequired.checked) {
+        saving = false;
+        alert('필수 동의가 필요합니다.');
+        return;
+      }
+
       if (!confirm('제출하고 전체 화면을 PNG로 저장할까요?')) {
         saving = false;
         return;
       }
 
       try {
-        const canvasImg = await html2canvas(wrap, {
+        const target = document.getElementById('appScreen');
+
+        const canvasImg = await html2canvas(target, {
           backgroundColor: '#fafafa',
           scale: 2,
-          windowWidth: wrap.scrollWidth,
-          windowHeight: wrap.scrollHeight
+          windowWidth: target.scrollWidth,
+          windowHeight: target.scrollHeight
         });
 
         const link = document.createElement('a');
         const ts = new Date().toISOString().replace(/[:.]/g, '-');
-        const name = document.getElementById('name').value || 'anon';
+        const safeName = agreeOptional.checked && nameInput.value.trim()
+          ? nameInput.value.trim()
+          : 'anon';
 
-        link.download = `drawing_${ts}_${name}.png`;
+        link.download = `drawing_${ts}_${safeName}.png`;
         link.href = canvasImg.toDataURL('image/png');
         link.click();
 
         setTimeout(() => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          document.getElementById('name').value = '';
-          document.getElementById('contact').value = '';
+          nameInput.value = '';
+          contactInput.value = '';
+          agreeOptional.checked = false;
           drawHistory = [];
           saving = false;
+          updateConsentUI();
           alert('저장 완료! 다음 분 준비됐어요.');
         }, 400);
       } catch (err) {
@@ -449,6 +686,8 @@
 
     window.history.pushState(null, "", location.href);
     window.onpopstate = () => window.history.pushState(null, "", location.href);
+
+    updateConsentUI();
   </script>
 
   <script>
