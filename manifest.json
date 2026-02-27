@@ -1,6 +1,6 @@
 {
-  "name": "현장 드로잉 설문",
-  "short_name": "드로잉 설문",
+  "name": "Four shapes",
+  "short_name": "Four shapes",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#fafafa",
