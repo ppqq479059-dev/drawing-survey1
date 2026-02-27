@@ -66,6 +66,7 @@
       display: flex;
       gap: 10px;
       align-items: flex-start;
+      margin-top: 8px;
     }
 
     .privacy-check input[type="checkbox"] {
@@ -82,10 +83,10 @@
     }
 
     .privacy-mini {
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 12px;
       color: #666;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
     .hint {
@@ -323,21 +324,31 @@
 <body>
   <div id="wrap">
     <div class="privacy-bar">
-      <p class="privacy-title">선택 동의 안내</p>
+      <p class="privacy-title">참여 및 선택 동의 안내</p>
       <p class="privacy-desc">
-        드로잉만 제출할 수 있습니다. 이름·연락처는 나중에 풀이/안내가 필요한 경우에만 선택적으로 입력해 주세요.
+        본 조사는 <strong>만 19세 이상 성인</strong>만 참여할 수 있습니다.
+        드로잉만 제출할 수 있으며, 이름·연락처는 나중에 풀이/안내가 필요한 경우에만 선택적으로 입력해 주세요.
       </p>
+
+      <div class="privacy-check">
+        <input type="checkbox" id="adultConfirm">
+        <label for="adultConfirm">
+          [필수] 본인은 만 19세 이상 성인입니다.
+        </label>
+      </div>
 
       <div class="privacy-check">
         <input type="checkbox" id="agreeOptional">
         <label for="agreeOptional">
           [선택] 이름·연락처 수집·이용에 동의합니다.
-          (목적: 사후 풀이/연락, 항목: 이름·연락처, 보유 기간: 목적 달성 후 파기, 거부해도 설문 참여 가능)
+          (목적: 사후 풀이 및 필요한 안내 연락 / 항목: 이름·연락처 / 보유 기간: 풀이 완료 후 30일 이내 파기 / 거부해도 드로잉 설문 참여는 가능합니다. 다만 사후 풀이 또는 연락 안내는 제한될 수 있습니다.)
         </label>
       </div>
 
       <div class="privacy-mini">
-        그림 자체도 운영 방식에 따라 특정인과 연결되면 개인정보로 평가될 수 있으니, 실제 운영에서는 보관 기간과 파기 기준을 구체적으로 정해두는 편이 안전합니다.
+        운영자: ________<br>
+        문의처: ________<br>
+        참여 대상: 만 19세 이상 성인
       </div>
     </div>
 
@@ -367,6 +378,7 @@
   </div>
 
   <script>
+    const adultConfirm = document.getElementById('adultConfirm');
     const agreeOptional = document.getElementById('agreeOptional');
     const contactFields = document.getElementById('contactFields');
     const nameInput = document.getElementById('name');
@@ -514,6 +526,11 @@
     };
 
     submitBtn.onclick = async () => {
+      if (!adultConfirm.checked) {
+        alert('만 19세 이상 성인만 참여할 수 있습니다.');
+        return;
+      }
+
       if (saving) return;
       saving = true;
 
@@ -544,6 +561,8 @@
 
         setTimeout(() => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          adultConfirm.checked = false;
 
           if (agreeOptional.checked) {
             nameInput.value = '';
