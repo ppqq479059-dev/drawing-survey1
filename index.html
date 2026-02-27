@@ -45,13 +45,57 @@
       word-break: keep-all;
     }
 
-    #canvas {
+    .board-wrap {
       flex: 1;
-      display: block;
-      width: 100%;
-      min-height: 340px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      background: #fafafa;
+    }
+
+    .board {
+      position: relative;
+      width: min(100%, 560px);
+      aspect-ratio: 210 / 297; /* A4 세로 */
       background: #fff;
+      border: 1px solid #ddd;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .guide {
+      position: absolute;
+      border: 2px solid #2f5d7e;
+      pointer-events: none;
+    }
+
+    /* A4 가로 21cm 기준에서 12cm = 57.14% */
+    .guide-large {
+      width: 57.14%;
+      aspect-ratio: 1 / 1;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* A4 가로 21cm 기준에서 6cm = 28.57% */
+    .guide-small {
+      width: 28.57%;
+      aspect-ratio: 1 / 1;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
       touch-action: none;
+      background: transparent;
     }
 
     .tools {
@@ -113,15 +157,18 @@
       background: #000;
     }
 
-    /* 태블릿 이하 */
     @media (max-width: 768px) {
       .hint {
         font-size: 13px;
         padding: 8px 10px;
       }
 
-      #canvas {
-        min-height: 280px;
+      .board-wrap {
+        padding: 10px;
+      }
+
+      .board {
+        width: min(100%, 92vw);
       }
 
       .tools {
@@ -154,14 +201,17 @@
       }
     }
 
-    /* 작은 스마트폰 */
     @media (max-width: 430px) {
       .hint {
         font-size: 12px;
       }
 
-      #canvas {
-        min-height: 220px;
+      .board-wrap {
+        padding: 8px;
+      }
+
+      .board {
+        width: min(100%, 96vw);
       }
 
       .tools {
@@ -196,9 +246,15 @@
 </head>
 <body>
   <div id="wrap">
-    <div class="hint">영감 예시: S □ △ ○ — 방식은 자유롭게</div>
+    <div class="hint">A4 세로 기준 · 중앙 12×12 정사각형 · 그 안에 중앙 6×6 정사각형</div>
 
-    <canvas id="canvas"></canvas>
+    <div class="board-wrap">
+      <div id="board" class="board">
+        <div class="guide guide-large"></div>
+        <div class="guide guide-small"></div>
+        <canvas id="canvas"></canvas>
+      </div>
+    </div>
 
     <div class="tools">
       <button id="pen" type="button">✏️</button>
@@ -217,6 +273,7 @@
 
   <script>
     const wrap = document.getElementById('wrap');
+    const board = document.getElementById('board');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -232,7 +289,7 @@
     let saving = false;
 
     function resizeCanvas() {
-      const rect = canvas.getBoundingClientRect();
+      const rect = board.getBoundingClientRect();
 
       let prev = null;
       try {
