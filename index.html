@@ -57,7 +57,7 @@
     .board {
       position: relative;
       width: min(100%, 560px);
-      aspect-ratio: 210 / 297; /* A4 세로 */
+      aspect-ratio: 210 / 297;
       background: #fff;
       border: 1px solid #ddd;
       overflow: hidden;
@@ -66,11 +66,11 @@
 
     .guide {
       position: absolute;
-      border: 2px solid #2f5d7e;
+      border: 1mm solid #2f5d7e;
       pointer-events: none;
+      z-index: 3;
     }
 
-    /* A4 가로 21cm 기준에서 12cm = 57.14% */
     .guide-large {
       width: 57.14%;
       aspect-ratio: 1 / 1;
@@ -79,7 +79,6 @@
       transform: translate(-50%, -50%);
     }
 
-    /* A4 가로 21cm 기준에서 6cm = 28.57% */
     .guide-small {
       width: 28.57%;
       aspect-ratio: 1 / 1;
@@ -96,6 +95,7 @@
       display: block;
       touch-action: none;
       background: transparent;
+      z-index: 2;
     }
 
     .tools {
